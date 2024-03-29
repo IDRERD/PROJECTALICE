@@ -37,6 +37,11 @@ def handle_dialog(req, res):
     if req["session"]["new"]:
         res['response']['text'] = 'Привет! Назови своё имя!'
         sessionStorage[user_id] = {"first_name": None}
+        res["response"]["buttons"] = [{"title": "Помощь", "hide": True}]
+        return
+    if req["request"]["command"] == "помощь":
+        res["response"]["text"] = f"""Это игра на угадывание городов
+Городов угадано: {3 - len(sessionStorage["cities"])}"""
         return
     if sessionStorage[user_id]["first_name"] is None:
         first_name = get_first_name(req)
@@ -51,20 +56,23 @@ def handle_dialog(req, res):
             r = len({"да", "нет"}.intersection(set(req["request"]["nlu"]["tokens"])))
             if r != 1:
                 res["response"]["text"] = "Не поняла ответа. Да или нет?"
+                res["response"]["buttons"] = [{"title": "Помощь", "hide": True}]
                 return
             else:
                 if "нет" in req["request"]["nlu"]["tokens"]:
                     res["response"]["text"] = "До свидания!"
+                    res["response"]["buttons"] = [{"title": "Помощь", "hide": True}]
                     return
                 else:
                     sessionStorage["play_flag"] = True
         if sessionStorage.get("play_flag", False):
             if len(sessionStorage["cities"]) == 0 and sessionStorage["img_id"] == -1:
                 res["response"]["text"] = "Все города уже отгаданы"
+                res["response"]["buttons"] = [{"title": "Помощь", "hide": True}]
                 return
             else:
                 guess_city(res, req)
-        # res["response"]["buttons"] = [{"title": "Помощь", "hide": True}]
+    res["response"]["buttons"] = [{"title": "Помощь", "hide": True}]
 
 
 def get_city(req):
