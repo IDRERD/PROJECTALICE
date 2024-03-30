@@ -38,6 +38,9 @@ def handle_dialog(req, res):
         res['response']['text'] = 'Привет! Назови своё имя!'
         sessionStorage[user_id] = {"first_name": None}
         return
+    if req["request"]["command"] == "покажи город на карте":
+        res["response"]["text"] = "Сышраем ещё?"
+        return
     if req["request"]["command"] == "помощь":
         res["response"]["text"] = f"""Это игра на угадывание городов
 Городов угадано: {3 - len(sessionStorage["cities"])}"""
